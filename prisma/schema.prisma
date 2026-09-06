@@ -49,6 +49,12 @@ model ResearcherProfile {
   academicRank    String             @default("NONE") // NONE, LECTURER, ASST_PROF, ASSOC_PROF, PROF
   isVerified      Boolean            @default(true)
   
+  // เป้าหมายตำแหน่งทางวิชาการและการประเมิน ก.พ.อ.
+  targetRank          String         @default("ASST_PROF") // ASST_PROF, ASSOC_PROF, PROF
+  teachingDocStatus   String         @default("NOT_STARTED") // NOT_STARTED, IN_PROGRESS, COMPLETED
+  teachingDocTitle    String?
+  teachingDocFileUrl  String?
+  
   email           String?
   phone           String?
   expertises      String?            // JSON string array of tags

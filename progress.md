@@ -17,6 +17,7 @@
 | **Phase 6: Multi-Tier RBAC & Auth System** | **COMPLETED** | 100% | ระบบสมาชิก 3 ระดับ (Admin, เจ้าหน้าที่สาขา, อาจารย์/นักวิจัยสงฆ์-คฤหัสถ์) พร้อมหน้ายืนยันตัวตนอาจารย์ |
 | **Phase 7: Digital Evidence & PDF Vault** | **COMPLETED** | 100% | ระบบอัปโหลดและคลังจัดเก็บไฟล์เอกสารหลักฐานจริง (PDF, DOCX, รูปภาพ) แนบผลงานวิจัยและการตรวจประเมิน SAR |
 | **Phase 8: Research Ethics (IRB) & Alert Engine** | **COMPLETED** | 100% | ระบบติดตามจริยธรรมการวิจัยในมนุษย์ (IRB) และศูนย์เตือนภัยเร่งรัดงวดงานวิจัย (Overdue / Due Soon) พร้อมแนบรายงานงวดงาน |
+| **Phase 9: Academic Rank Readiness (ก.พ.อ.)** | **COMPLETED** | 100% | ระบบประเมินความพร้อมขอตำแหน่งทางวิชาการ (ผศ./รศ./ศ. Checklist) และบันทึกเอกสารคำสอน/ตำรา |
 
 ---
 
@@ -108,11 +109,27 @@
   - [x] โมดอลส่งรายงานงวดงาน (แนบไฟล์รายงาน PDF/DOCX)
   - [x] ปุ่มตรวจรับและอนุมัติงวดงานสำหรับเจ้าหน้าที่ (`PATCH /api/grants`)
 
+### Phase 9: Academic Rank Readiness (ก.พ.อ. Checklist & Evaluator)
+- [x] **TASK-901: Academic Rank Evaluation Logic Engine (`src/lib/rank-evaluator.ts`)**
+  - [x] ตรวจสอบเกณฑ์ ผศ. (บทความ TCI 2 เรื่อง, First Author ≥ 50%, เอกสารคำสอน 1 รายวิชา, PDF Vault)
+  - [x] ตรวจสอบเกณฑ์ รศ. (บทความ TCI-1/Scopus 3 เรื่อง, First Author ≥ 50%, ตำราวิชาการ 1 เล่ม, ครองตำแหน่ง ผศ.)
+  - [x] ตรวจสอบเกณฑ์ ศ. (บทความนานาชาติ Scopus 5 เรื่อง, ตำรา 2 เล่ม, ครองตำแหน่ง รศ.)
+  - [x] คำนวณเปอร์เซ็นต์ความพร้อม (0-100%) และสังเคราะห์คำแนะนำเชิงกลยุทธ์ (Strategic Gap Advice)
+- [x] **TASK-902: Rank Evaluation & Teaching Material API (`src/app/api/academic-rank/route.ts`)**
+  - [x] `GET`: ดึงการประเมินความพร้อมของอาจารย์รายบุคคล และรายชื่อคณาจารย์ทั้งหมด
+  - [x] `POST`: บันทึกข้อมูลและแนบไฟล์เอกสารประกอบการสอน / ตำราวิชาการ
+- [x] **TASK-903: Interactive Rank Checklist & Readiness Meter UI (`src/app/academic-ranks/page.tsx`)**
+  - [x] Visual Readiness Gauge แสดงเปอร์เซ็นต์ความพร้อมและสถานะ Ready to Apply
+  - [x] 5-Point Detailed Criteria Breakdown พร้อม Accordion แสดงรายชื่อบทความที่เข้าเกณฑ์
+  - [x] ปุ่มพิมพ์รายงานสรุปผลการประเมิน (Print-to-PDF)
+  - [x] โมดอลบันทึกและแนบไฟล์เอกสารประกอบการสอน/ตำรา
+  - [x] เชื่อมต่อเมนูนำทางใน Navbar
+
 ---
 
 ## 3. Verification & Build Results
 * `npx tsc --noEmit`: ผ่าน 100% (Zero type errors)
-* `npm run build`: สำเร็จ 100% ทุก Route ถูก Optimize และสร้างเรียบร้อย (Static & Dynamic SSR)
+* `npm run build`: สำเร็จ 100% ทั้ง 18 Routes ถูก Optimize และสร้างเรียบร้อย (Static & Dynamic SSR)
 * Database: SQLite `dev.db` ผ่านการรัน Migration และ Seed Master Data สมบูรณ์
 
 ---
@@ -122,3 +139,4 @@
 * **[2026-09-06] ADR-002:** แยกฟิลด์ `chaya` (ฉายาพระภิกษุ) และ `sanghaStatus` ในตาราง `ResearcherProfile` เพื่อตอบโจทย์อัตลักษณ์ของวิทยาลัยสงฆ์โดยเฉพาะ
 * **[2026-09-06] ADR-003:** ใช้ SQLite ผ่าน Prisma ORM ในการรันบนเครื่อง Local Windows เพื่อให้พร้อมใช้งานทันทีโดยไม่ต้องพึ่งพา Docker หรือ MySQL Server ภายนอก และสามารถสลับเป็น PostgreSQL บน Cloud ได้ทันทีผ่านการเปลี่ยน `DATABASE_URL`
 * **[2026-09-06] ADR-004:** ขยายโมเดล `ResearchGrant` ใน `prisma/schema.prisma` เพื่อรองรับจริยธรรมการวิจัยในมนุษย์ (IRB - Institutional Review Board) ได้แก่ `irbStatus`, `irbNumber`, `irbApprovalDate`, `irbExpireDate`, `irbFileUrl` และเพิ่ม `PATCH` endpoint เพื่อรองรับวงจรการส่งและอนุมัติงวดงานวิจัยครบวงจร
+* **[2026-09-06] ADR-005:** เพิ่มฟิลด์เป้าหมายตำแหน่งทางวิชาการ (`targetRank`, `teachingDocStatus`, `teachingDocTitle`, `teachingDocFileUrl`) ใน `ResearcherProfile` เพื่อสนับสนุนการประเมินความพร้อมและจัดเก็บเอกสารประกอบการสอนตามเกณฑ์ ก.พ.อ.
