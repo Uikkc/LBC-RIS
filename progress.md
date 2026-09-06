@@ -14,6 +14,8 @@
 | **Phase 3: M03 Grants & M04 QA Export** | **COMPLETED** | 100% | ติดตามงวดเงิน/งวดงานวิจัย และ One-Click SAR Export Engine |
 | **Phase 4: M05 Executive Dashboard & Public** | **COMPLETED** | 100% | แดชบอร์ดสรุปผลกราฟ Recharts และหน้าทำเนียบอาจารย์สาธารณะ |
 | **Phase 5: Quality Hardening & Verification** | **COMPLETED** | 100% | ผ่านการทดสอบ Typecheck 100% (`tsc --noEmit`) และ `next build` สำเร็จสมบูรณ์ |
+| **Phase 6: Multi-Tier RBAC & Auth System** | **COMPLETED** | 100% | ระบบสมาชิก 3 ระดับ (Admin, เจ้าหน้าที่สาขา, อาจารย์/นักวิจัยสงฆ์-คฤหัสถ์) พร้อมหน้ายืนยันตัวตนอาจารย์ |
+| **Phase 7: Digital Evidence & PDF Vault** | **COMPLETED** | 100% | ระบบอัปโหลดและคลังจัดเก็บไฟล์เอกสารหลักฐานจริง (PDF, DOCX, รูปภาพ) แนบผลงานวิจัยและการตรวจประเมิน SAR |
 
 ---
 
@@ -67,6 +69,30 @@
 - [x] **TASK-402: Public Directory & Search Interface (`/directory`)**
   - [x] หน้าทำเนียบผู้เชี่ยวชาญสำหรับนิสิต 500 รูป/คน และบุคคลภายนอก
   - [x] ระบบค้นหาตามชื่อ, ความเชี่ยวชาญ และตัวกรองสถานะพระภิกษุ/คฤหัสถ์
+
+### Phase 6: Multi-Tier RBAC & Auth System
+- [x] **TASK-601: Self-Service Registration & Buddhist Identity Handler (`/register`)**
+  - [x] รองรับการสลับสถานะ พระภิกษุ (สมณศักดิ์, ฉายา, นามสกุล optional) / คฤหัสถ์
+  - [x] เลือกสังกัด 4 สาขาวิชา พร้อมสร้าง Profile ในสถานะรอตรวจสอบ (`isVerified: false`)
+- [x] **TASK-602: Secure Authentication & Session Engine (`/login`)**
+  - [x] ระบบ Login ผ่าน Secure Cookie Session พร้อมปุ่ม 1-Click Demo Login
+  - [x] สลับทดสอบได้ทั้ง Super Admin, เจ้าหน้าที่ประจำสาขา (Dept Staff) และอาจารย์สงฆ์
+- [x] **TASK-603: Department Officer Workspace & Verification Portal (`/department-admin`)**
+  - [x] แสดงเฉพาะอาจารย์ในสาขาวิชาที่ตนเองรับผิดชอบ (Data Isolation)
+  - [x] ปุ่มตรวจสอบและอนุมัติสถานะอาจารย์ (Verify Badge)
+
+### Phase 7: Digital Evidence & PDF Vault System
+- [x] **TASK-701: Digital Evidence Upload API Engine (`/api/upload`)**
+  - [x] จัดเก็บไฟล์ลงใน `public/uploads/evidence/` ตรวจสอบนามสกุล (.pdf, .png, .jpg, .docx) ขนาดสูงสุด 25MB
+  - [x] ตั้งชื่อไฟล์อัตโนมัติแบบ Timestamped ป้องกันชื่อไฟล์ชนกัน
+- [x] **TASK-702: Interactive FileUpload UI Component (`src/components/FileUpload.tsx`)**
+  - [x] รองรับ Drag-and-Drop, แสดงขนาดไฟล์, แถบความคืบหน้าการอัปโหลด, ปุ่มดูตัวอย่าง และปุ่มลบไฟล์
+- [x] **TASK-703: Publication & Full-Text Evidence Integration (`/research`)**
+  - [x] เชื่อมต่อ FileUpload ในโมดอลบันทึกผลงานใหม่
+  - [x] แสดง Badge หลักฐาน PDF และปุ่ม "เปิดดูเอกสารฉบับเต็ม (Full-Text PDF)" ในการ์ดผลงาน
+- [x] **TASK-704: QA Audit Trail & Real Evidence Link Integration (`/qa-reports`)**
+  - [x] เพิ่มคอลัมน์ "เอกสารหลักฐานจริง" ในตาราง SAR พร้อมปุ่มคลิกเปิดดูไฟล์หลักฐานทันที
+  - [x] อัปเดต `/api/qa-export` ให้แนบ Link เอกสารหลักฐานจริงลงในไฟล์ Excel/CSV อัตโนมัติ
 
 ---
 
