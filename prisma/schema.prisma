@@ -1,0 +1,167 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               String             @id @default(cuid())
+  email            String             @unique
+  passwordHash     String?
+  role             String             @default("RESEARCHER") // SUPER_ADMIN, DEPT_STAFF, RESEARCHER, QA_OFFICER, EXECUTIVE
+  isActive         Boolean            @default(true)
+  isApproved       Boolean            @default(true)
+  managedDeptId    String?
+  managedDept      Department?        @relation("DeptStaff", fields: [managedDeptId], references: [id])
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  profile          ResearcherProfile?
+
+  @@map("users")
+}
+
+model Department {
+  id          String              @id @default(cuid())
+  code        String              @unique
+  nameTh      String
+  nameEn      String?
+  profiles    ResearcherProfile[]
+  staffUsers  User[]              @relation("DeptStaff")
+
+  @@map("departments")
+}
+
+model ResearcherProfile {
+  id              String             @id @default(cuid())
+  userId          String             @unique
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  departmentId    String
+  department      Department         @relation(fields: [departmentId], references: [id])
+  
+  sanghaStatus    String             @default("LAITY") // MONK, LAITY
+  prefix          String             // "พระมหา", "พระครู", "ดร.", "ผศ.ดร."
+  firstName       String
+  lastName        String?            // พระภิกษุบางรูปอาจไม่มีนามสกุล
+  chaya           String?            // ฉายา เช่น "ฐิตธมฺโม", "วชิรญาโณ"
+  academicRank    String             @default("NONE") // NONE, LECTURER, ASST_PROF, ASSOC_PROF, PROF
+  isVerified      Boolean            @default(true)
+  
+  email           String?
+  phone           String?
+  expertises      String?            // JSON string array of tags
+  orcidId         String?
+  googleScholar   String?
+  avatarUrl       String?
+  
+  authorships     PublicationAuthor[]
+  grantMemberships GrantMember[]
+  
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@map("researcher_profiles")
+}
+
+model Publication {
+  id              String              @id @default(cuid())
+  grantId         String?
+  grant           ResearchGrant?      @relation(fields: [grantId], references: [id], onDelete: SetNull)
+  
+  type            String              // JOURNAL, CONFERENCE, BOOK, CREATIVE_WORK
+  titleTh         String
+  titleEn         String?
+  abstractTh      String?
+  abstractEn      String?
+  keywords        String?             // Comma-separated or JSON
+  
+  indexing        String              @default("GENERAL") // TCI_TIER_1, TCI_TIER_2, SCOPUS_Q1-Q4, WOS, NATIONAL_CONF, INTL_CONF, GENERAL
+  venueName       String              // ชื่อวารสาร หรือชื่องานประชุม
+  yearBe          Int                 // ปี พ.ศ. เช่น 2567
+  volume          String?
+  issue           String?
+  pages           String?
+  doi             String?
+  isbn            String?
+  url             String?
+  
+  fileUrl         String?             // Path / URL ของไฟล์ PDF
+  status          String              @default("VERIFIED") // DRAFT, SUBMITTED, VERIFIED, REJECTED
+  qaScore         Float               @default(0.0)
+  verifiedAt      DateTime?
+  verifiedBy      String?
+  
+  authors         PublicationAuthor[]
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@index([yearBe])
+  @@index([type])
+  @@index([indexing])
+  @@map("publications")
+}
+
+model PublicationAuthor {
+  id              String             @id @default(cuid())
+  publicationId   String
+  publication     Publication        @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+  profileId       String?
+  profile         ResearcherProfile? @relation(fields: [profileId], references: [id], onDelete: SetNull)
+  
+  authorName      String             // ชื่อผู้แต่ง
+  authorRole      String             @default("CO_AUTHOR") // FIRST_AUTHOR, CORRESPONDING, CO_AUTHOR
+  authorShare     Float              @default(100.0) // สัดส่วนร้อยละ เช่น 60.0
+
+  @@map("publication_authors")
+}
+
+model ResearchGrant {
+  id              String              @id @default(cuid())
+  projectCode     String              @unique
+  titleTh         String
+  titleEn         String?
+  fundingSource   String              // เช่น "กองทุนวิจัย วส.เลย", "วช.", "บพท."
+  grantType       String              @default("INTERNAL") // INTERNAL, EXTERNAL
+  totalBudget     Float
+  startDate       DateTime
+  endDate         DateTime
+  status          String              @default("IN_PROGRESS") // PROPOSAL, APPROVED, IN_PROGRESS, COMPLETED, TERMINATED
+  
+  members         GrantMember[]
+  milestones      GrantMilestone[]
+  publications    Publication[]
+  
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@map("research_grants")
+}
+
+model GrantMilestone {
+  id                  String           @id @default(cuid())
+  grantId             String
+  grant               ResearchGrant    @relation(fields: [grantId], references: [id], onDelete: Cascade)
+  milestoneNumber     Int
+  title               String
+  dueDate             DateTime
+  submittedDate       DateTime?
+  disbursementAmount  Float
+  status              String           @default("PENDING") // PENDING, SUBMITTED, APPROVED, OVERDUE
+  deliverableFileUrl  String?
+
+  @@map("grant_milestones")
+}
+
+model GrantMember {
+  id            String             @id @default(cuid())
+  grantId       String
+  grant         ResearchGrant      @relation(fields: [grantId], references: [id], onDelete: Cascade)
+  profileId     String
+  profile       ResearcherProfile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  role          String             // "หัวหน้าโครงการ", "ผู้ร่วมวิจัย"
+
+  @@unique([grantId, profileId])
+  @@map("grant_members")
+}

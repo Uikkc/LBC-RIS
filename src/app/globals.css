@@ -1,0 +1,32 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #b80035;
+  --primary-dark: #881337;
+  --surface: #f8f9ff;
+}
+
+body {
+  background-color: #f8f9ff;
+  color: #0b1c30;
+  font-family: -apple-system, BlinkMacSystemFont, 'Sarabun', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.max-container {
+  max-width: 72rem; /* max-w-6xl */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .max-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
