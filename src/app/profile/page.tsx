@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { 
   UserCheck, 
   Mail, 
@@ -11,7 +12,8 @@ import {
   Edit3, 
   Save, 
   Tag,
-  CheckCircle2
+  CheckCircle2,
+  Printer
 } from 'lucide-react';
 
 interface Profile {
@@ -183,13 +185,24 @@ export default function ProfilePage() {
               {activeProfile.sanghaStatus === 'MONK' ? 'ภ' : 'อ'}
             </div>
 
-            <button
-              onClick={() => setIsEditing(!isEditing)}
-              className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors self-start sm:self-auto"
-            >
-              <Edit3 className="w-4 h-4 text-brand-primary" />
-              <span>{isEditing ? 'ยกเลิกการแก้ไข' : 'แก้ไขข้อมูลส่วนตัว'}</span>
-            </button>
+            <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+              <Link
+                href={`/academic-cv?profileId=${activeProfile.id}&mode=gorporor`}
+                className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-sm font-semibold text-slate-700 transition-colors shadow-2xs"
+                title="พิมพ์แบบฟอร์ม ก.พ.อ. 03 และ Official Academic CV"
+              >
+                <Printer className="w-4 h-4 text-slate-600" />
+                <span>พิมพ์แบบ ก.พ.อ. 03 / CV</span>
+              </Link>
+
+              <button
+                onClick={() => setIsEditing(!isEditing)}
+                className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+              >
+                <Edit3 className="w-4 h-4 text-brand-primary" />
+                <span>{isEditing ? 'ยกเลิกการแก้ไข' : 'แก้ไขข้อมูลส่วนตัว'}</span>
+              </button>
+            </div>
           </div>
 
           {savedSuccess && (

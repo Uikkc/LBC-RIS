@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { 
   GraduationCap, 
   Award, 
@@ -177,15 +178,15 @@ export default function AcademicRankPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          {/* Print Button */}
-          <button
-            onClick={handlePrint}
+          {/* GorPorOr 03 & CV Print Button */}
+          <Link
+            href={`/academic-cv?profileId=${selectedProfileId}&mode=gorporor`}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all"
-            title="พิมพ์รายงานสรุปผลการประเมิน (Audit Report)"
+            title="เปิดแบบฟอร์ม ก.พ.อ. 03 ทางการ เพื่อพิมพ์หรือบันทึก PDF"
           >
             <Printer className="w-4 h-4" />
-            <span>พิมพ์ผลการประเมิน (PDF)</span>
-          </button>
+            <span>เปิดแบบ ก.พ.อ. 03 (PDF)</span>
+          </Link>
 
           {/* Update Teaching Doc Button */}
           <button

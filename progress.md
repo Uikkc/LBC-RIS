@@ -18,6 +18,7 @@
 | **Phase 7: Digital Evidence & PDF Vault** | **COMPLETED** | 100% | ระบบอัปโหลดและคลังจัดเก็บไฟล์เอกสารหลักฐานจริง (PDF, DOCX, รูปภาพ) แนบผลงานวิจัยและการตรวจประเมิน SAR |
 | **Phase 8: Research Ethics (IRB) & Alert Engine** | **COMPLETED** | 100% | ระบบติดตามจริยธรรมการวิจัยในมนุษย์ (IRB) และศูนย์เตือนภัยเร่งรัดงวดงานวิจัย (Overdue / Due Soon) พร้อมแนบรายงานงวดงาน |
 | **Phase 9: Academic Rank Readiness (ก.พ.อ.)** | **COMPLETED** | 100% | ระบบประเมินความพร้อมขอตำแหน่งทางวิชาการ (ผศ./รศ./ศ. Checklist) และบันทึกเอกสารคำสอน/ตำรา |
+| **Phase 10: Official GorPorOr 03 & Academic CV** | **COMPLETED** | 100% | ระบบพิมพ์แบบฟอร์ม ก.พ.อ. 03 ทางการ และ Official Academic Curriculum Vitae (Print to PDF) |
 
 ---
 
@@ -125,11 +126,23 @@
   - [x] โมดอลบันทึกและแนบไฟล์เอกสารประกอบการสอน/ตำรา
   - [x] เชื่อมต่อเมนูนำทางใน Navbar
 
+### Phase 10: Official GorPorOr 03 & Academic Curriculum Vitae (CV)
+- [x] **TASK-1001: Academic CV & GorPorOr 03 Data Engine (`src/app/api/academic-cv/route.ts`)**
+  - [x] ดึงข้อมูลอาจารย์แบบองค์รวม: ประวัติ, สมณศักดิ์, ฉายา, ผลงานตีพิมพ์พร้อมสัดส่วนผู้แต่ง (First Author %), ทุนวิจัย, IRB, และเอกสารคำสอน
+- [x] **TASK-1002: Print-Ready A4 GorPorOr 03 & Academic CV Layout (`src/app/academic-cv/page.tsx`)**
+  - [x] ตราสัญลักษณ์ มจร. และหัวเรื่องราชการ วิทยาลัยสงฆ์เลย
+  - [x] โหมดแบบฟอร์ม ก.พ.อ. 03 (ตารางผลงาน สัดส่วนผู้แต่ง ทุนวิจัย และช่องลงนาม 3 ตำแหน่ง: ผู้ขอ, หัวหน้าสาขา, ผอ.วิทยาลัย)
+  - [x] โหมด Official Academic Curriculum Vitae (CV) รูปแบบสากลสำหรับยื่นขอทุน บพท./วช.
+  - [x] สไตล์การพิมพ์ `@media print` ซ่อนปุ่มและแถบนำทางอัตโนมัติ จัดหน้า A4 คมชัดพร้อมสั่งพิมพ์หรือเซฟ PDF
+- [x] **TASK-1003: Integration with Researcher Profile & Academic Rank Evaluator**
+  - [x] ปุ่ม "พิมพ์แบบ ก.พ.อ. 03 / CV" ในหน้าโปรไฟล์อาจารย์ (`/profile`)
+  - [x] เชื่อมต่อปุ่มพิมพ์ในหน้าระบบประเมินตำแหน่งวิชาการ (`/academic-ranks`)
+
 ---
 
 ## 3. Verification & Build Results
 * `npx tsc --noEmit`: ผ่าน 100% (Zero type errors)
-* `npm run build`: สำเร็จ 100% ทั้ง 18 Routes ถูก Optimize และสร้างเรียบร้อย (Static & Dynamic SSR)
+* `npm run build`: สำเร็จ 100% ทั้ง 19 Routes ถูก Optimize และสร้างเรียบร้อย (Static & Dynamic SSR)
 * Database: SQLite `dev.db` ผ่านการรัน Migration และ Seed Master Data สมบูรณ์
 
 ---
