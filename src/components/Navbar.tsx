@@ -15,7 +15,8 @@ import {
   LogIn,
   LogOut,
   UserPlus,
-  ShieldAlert
+  ShieldAlert,
+  Globe
 } from 'lucide-react';
 
 interface CurrentUser {
@@ -57,6 +58,7 @@ export default function Navbar() {
     { href: '/research', label: 'คลังผลงานวิชาการ', icon: BookOpen },
     { href: '/profile', label: 'แฟ้มประวัตินักวิจัย', icon: UserCheck },
     { href: '/grants', label: 'ทุนและงวดงาน', icon: Award },
+    { href: '/social-impact', label: 'ผลกระทบสังคม (Impact)', icon: Globe },
     { href: '/qa-reports', label: 'รายงาน SAR / QA', icon: FileSpreadsheet },
     { href: '/directory', label: 'ทำเนียบสาธารณะ', icon: Search },
   ];

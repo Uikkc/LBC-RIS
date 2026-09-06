@@ -19,6 +19,7 @@
 | **Phase 8: Research Ethics (IRB) & Alert Engine** | **COMPLETED** | 100% | ระบบติดตามจริยธรรมการวิจัยในมนุษย์ (IRB) และศูนย์เตือนภัยเร่งรัดงวดงานวิจัย (Overdue / Due Soon) พร้อมแนบรายงานงวดงาน |
 | **Phase 9: Academic Rank Readiness (ก.พ.อ.)** | **COMPLETED** | 100% | ระบบประเมินความพร้อมขอตำแหน่งทางวิชาการ (ผศ./รศ./ศ. Checklist) และบันทึกเอกสารคำสอน/ตำรา |
 | **Phase 10: Official GorPorOr 03 & Academic CV** | **COMPLETED** | 100% | ระบบพิมพ์แบบฟอร์ม ก.พ.อ. 03 ทางการ และ Official Academic Curriculum Vitae (Print to PDF) |
+| **Phase 11: Research Utilization & Social Impact** | **COMPLETED** | 100% | ระบบบันทึกการนำผลงานวิจัยไปใช้ประโยชน์และผลกระทบต่อสังคม 4 มิติ (อว./สมศ.) พร้อมหลักฐานรับรองทางการ |
 
 ---
 
@@ -126,7 +127,7 @@
   - [x] โมดอลบันทึกและแนบไฟล์เอกสารประกอบการสอน/ตำรา
   - [x] เชื่อมต่อเมนูนำทางใน Navbar
 
-### Phase 10: Official GorPorOr 03 & Academic Curriculum Vitae (CV)
+#### Phase 10: Official GorPorOr 03 & Academic Curriculum Vitae (CV)
 - [x] **TASK-1001: Academic CV & GorPorOr 03 Data Engine (`src/app/api/academic-cv/route.ts`)**
   - [x] ดึงข้อมูลอาจารย์แบบองค์รวม: ประวัติ, สมณศักดิ์, ฉายา, ผลงานตีพิมพ์พร้อมสัดส่วนผู้แต่ง (First Author %), ทุนวิจัย, IRB, และเอกสารคำสอน
 - [x] **TASK-1002: Print-Ready A4 GorPorOr 03 & Academic CV Layout (`src/app/academic-cv/page.tsx`)**
@@ -138,11 +139,27 @@
   - [x] ปุ่ม "พิมพ์แบบ ก.พ.อ. 03 / CV" ในหน้าโปรไฟล์อาจารย์ (`/profile`)
   - [x] เชื่อมต่อปุ่มพิมพ์ในหน้าระบบประเมินตำแหน่งวิชาการ (`/academic-ranks`)
 
+### Phase 11: Research Utilization & Social Impact Tracking
+- [x] **TASK-1101: Research Utilization Data Model & Schema Engine**
+  - [x] เพิ่มโมเดล `ResearchUtilization` ใน `prisma/schema.prisma` รองรับ 4 มิติ (POLICY, PUBLIC_COMMUNITY, ECONOMIC_LOCAL, ACADEMIC)
+  - [x] เชื่อมโยงกับ `ResearcherProfile`, `ResearchGrant`, และ `Publication`
+  - [x] จัดเก็บหน่วยงานรับรองภายนอก, ผู้ลงนาม, เลขที่หนังสือ, วันที่, และไฟล์เอกสารหลักฐานจริงจาก Evidence Vault
+  - [x] รัน `prisma db push` และ Seed ข้อมูลการใช้ประโยชน์ตัวอย่างสมจริง (ธรรมนูญสุขภาพพระสงฆ์ จ.เลย, ท่องเที่ยวพุทธเชียงคาน ฯลฯ)
+- [x] **TASK-1102: Social Impact Analytics & Submission API (`/api/utilizations`)**
+  - [x] `GET`: สรุปตัวชี้วัดผลกระทบ (ผู้ได้รับประโยชน์รวม, มูลค่าเศรษฐกิจชุมชน, จำนวนโครงการแยก 4 มิติ) พร้อมตัวกรองมิติและปี พ.ศ.
+  - [x] `POST`: ตรวจสอบความถูกต้องของข้อมูลผ่าน Zod Schema (Rule 2) บันทึกและเชื่อมโยงเอกสารรับรอง
+- [x] **TASK-1103: Social Impact Interactive Dashboard & Evidence Viewer (`/social-impact`)**
+  - [x] แดชบอร์ดสรุปผู้ได้รับประโยชน์จริงสะสม (รูป/คน) และมูลค่าผลกระทบทางเศรษฐกิจชุมชน (บาท)
+  - [x] แท็บกรอง 4 มิติ และการค้นหาแบบตอบสนองทันที (Instant Filtering)
+  - [x] การ์ดแสดงผลงานพร้อมข้อมูลหนังสือรับรอง และปุ่มเปิดดูเอกสารหลักฐานจริง (PDF Vault)
+  - [x] โมดอลบันทึกผลงานใหม่พร้อมคอมโพเนนต์ `FileUpload`
+  - [x] เพิ่มเมนู "ผลกระทบสังคม (Impact)" ในแถบนำทาง Navbar
+
 ---
 
 ## 3. Verification & Build Results
 * `npx tsc --noEmit`: ผ่าน 100% (Zero type errors)
-* `npm run build`: สำเร็จ 100% ทั้ง 19 Routes ถูก Optimize และสร้างเรียบร้อย (Static & Dynamic SSR)
+* `npm run build`: สำเร็จ 100% ทั้ง 20 Routes ถูก Optimize และสร้างเรียบร้อย (Static & Dynamic SSR)
 * Database: SQLite `dev.db` ผ่านการรัน Migration และ Seed Master Data สมบูรณ์
 
 ---
@@ -153,3 +170,4 @@
 * **[2026-09-06] ADR-003:** ใช้ SQLite ผ่าน Prisma ORM ในการรันบนเครื่อง Local Windows เพื่อให้พร้อมใช้งานทันทีโดยไม่ต้องพึ่งพา Docker หรือ MySQL Server ภายนอก และสามารถสลับเป็น PostgreSQL บน Cloud ได้ทันทีผ่านการเปลี่ยน `DATABASE_URL`
 * **[2026-09-06] ADR-004:** ขยายโมเดล `ResearchGrant` ใน `prisma/schema.prisma` เพื่อรองรับจริยธรรมการวิจัยในมนุษย์ (IRB - Institutional Review Board) ได้แก่ `irbStatus`, `irbNumber`, `irbApprovalDate`, `irbExpireDate`, `irbFileUrl` และเพิ่ม `PATCH` endpoint เพื่อรองรับวงจรการส่งและอนุมัติงวดงานวิจัยครบวงจร
 * **[2026-09-06] ADR-005:** เพิ่มฟิลด์เป้าหมายตำแหน่งทางวิชาการ (`targetRank`, `teachingDocStatus`, `teachingDocTitle`, `teachingDocFileUrl`) ใน `ResearcherProfile` เพื่อสนับสนุนการประเมินความพร้อมและจัดเก็บเอกสารประกอบการสอนตามเกณฑ์ ก.พ.อ.
+* **[2026-09-06] ADR-006:** เพิ่มโมเดล `ResearchUtilization` ใน `prisma/schema.prisma` เพื่อรองรับการติดตามการนำผลงานวิจัยไปใช้ประโยชน์ 4 มิติตามเกณฑ์ อว./สมศ. (เชิงนโยบาย, เชิงสาธารณะ/ชุมชน, เชิงเศรษฐกิจฐานราก, เชิงวิชาการ) พร้อมจัดเก็บหนังสือรับรองและไฟล์ PDF จากหน่วยงานภายนอกเพื่อใช้เป็นหลักฐานการประเมินคุณภาพการศึกษา (SAR)

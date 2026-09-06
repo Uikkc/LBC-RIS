@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log('Clearing existing data...');
+  await prisma.researchUtilization.deleteMany({});
   await prisma.grantMilestone.deleteMany({});
   await prisma.grantMember.deleteMany({});
   await prisma.publicationAuthor.deleteMany({});
@@ -307,7 +308,89 @@ async function main() {
     },
   });
 
-  console.log('Seed with Multi-Tier accounts completed successfully!');
+  console.log('Seeding Research Utilizations & Social Impact...');
+  await prisma.researchUtilization.create({
+    data: {
+      title: 'ธรรมนูญสุขภาพพระสงฆ์และมาตรการการดูแลพระสงฆ์อาพาธระดับจังหวัดเลย',
+      dimension: 'POLICY',
+      targetArea: '14 อำเภอในเขตจังหวัดเลย',
+      targetGroup: 'พระภิกษุสามเณร 1,250 รูป และอาสาสมัครสาธารณสุขประจำวัด (อสว.)',
+      impactDescription: 'สำนักงานสาธารณสุขจังหวัดเลย และคณะสงฆ์จังหวัดเลย ได้นำข้อค้นพบจากงานวิจัยไปประกาศใช้เป็น "ธรรมนูญสุขภาพพระสงฆ์จังหวัดเลย" ฉบับแรก เพื่อจัดระบบสิทธิการรักษาพยาบาลและคลินิกพระสงฆ์ในโรงพยาบาลชุมชน 14 แห่ง',
+      benefitUnitCount: 1250,
+      economicValueThb: null,
+      certifyingAgency: 'สำนักงานสาธารณสุขจังหวัดเลย (สสจ.เลย)',
+      certifierName: 'นพ.ชาญชัย บุญอยู่ (นายแพทย์สาธารณสุขจังหวัดเลย)',
+      letterNo: 'ลย ๐๐๓๓.๐๐๑/ว ๑๔๘๙',
+      letterDate: new Date('2024-02-15'),
+      evidenceFileUrl: '/uploads/evidence-sample-cert-policy.pdf',
+      yearBe: 2567,
+      profileId: userMonk.profile!.id,
+      grantId: grant1.id,
+      status: 'VERIFIED',
+    },
+  });
+
+  await prisma.researchUtilization.create({
+    data: {
+      title: 'คู่มือกระบวนการระงับข้อพิพาทชุมชนตามแนวพุทธสันติวิธีในลุ่มน้ำเลย',
+      dimension: 'PUBLIC_COMMUNITY',
+      targetArea: 'ตำบลกุดป่อง และตำบลนาอาน อำเภอเมือง จังหวัดเลย',
+      targetGroup: 'ผู้นำชุมชน ไวยาวัจกร และประชาชน 450 คน',
+      impactDescription: 'องค์การบริหารส่วนตำบลและสภาวัฒนธรรมอำเภอเมืองเลยนำกระบวนการไกล่เกลี่ยข้อพิพาทตามพุทธสันติวิธีไปจัดตั้งศูนย์ไกล่เกลี่ยประจำตำบล ลดข้อพิพาทเรื่องที่ดินและทรัพยากรน้ำได้มากกว่า 18 กรณี',
+      benefitUnitCount: 450,
+      economicValueThb: null,
+      certifyingAgency: 'องค์การบริหารส่วนตำบลนาอาน และศูนย์ไกล่เกลี่ยข้อพิพาทภาคประชาชน',
+      certifierName: 'นายกองค์การบริหารส่วนตำบลนาอาน',
+      letterNo: 'อบต.นอ ๕๒๐๑/๓๘๒',
+      letterDate: new Date('2024-05-10'),
+      evidenceFileUrl: '/uploads/evidence-sample-cert-community.pdf',
+      yearBe: 2567,
+      profileId: userMonk.profile!.id,
+      status: 'VERIFIED',
+    },
+  });
+
+  await prisma.researchUtilization.create({
+    data: {
+      title: 'โมเดลเส้นทางท่องเที่ยวเชิงวัฒนธรรมพุทธและการยกระดับผลิตภัณฑ์ของที่ระลึกริมโขง',
+      dimension: 'ECONOMIC_LOCAL',
+      targetArea: 'อำเภอเชียงคาน จังหวัดเลย',
+      targetGroup: 'วิสาหกิจชุมชนแปรรูปผ้าฝ้ายและโฮมสเตย์ 8 กลุ่ม (สมาชิก 120 ครัวเรือน)',
+      impactDescription: 'นำองค์ความรู้และลวดลายวัฒนธรรมพุทธโบราณไทดำ-เชียงคาน ไปพัฒนาผลิตภัณฑ์ของที่ระลึกและเส้นทางท่องเที่ยวเชิงธรรมะริมโขง สร้างรายได้เสริมให้ชุมชนเพิ่มขึ้นเฉลี่ย 35% ต่อปี',
+      benefitUnitCount: 380,
+      economicValueThb: 1450000.0,
+      certifyingAgency: 'เทศบาลตำบลเชียงคาน และกลุ่มวิสาหกิจชุมชนริมโขง',
+      certifierName: 'นายกเทศมนตรีตำบลเชียงคาน',
+      letterNo: 'ทต.ชค ๕๔๑๐๒/๗๒๐',
+      letterDate: new Date('2024-06-20'),
+      evidenceFileUrl: '/uploads/evidence-sample-cert-economic.pdf',
+      yearBe: 2567,
+      profileId: userExec.profile!.id,
+      status: 'VERIFIED',
+    },
+  });
+
+  await prisma.researchUtilization.create({
+    data: {
+      title: 'ชุดการเรียนรู้หลักสูตรระยะสั้น "พระคิลานุปัฏฐาก (พระอาสาสมัครส่งเสริมสุขภาพประจำวัด)"',
+      dimension: 'ACADEMIC',
+      targetArea: 'วิทยาลัยสงฆ์เลย และศูนย์การศึกษาพระปริยัติธรรม แผนกสามัญศึกษา เขต ๘',
+      targetGroup: 'พระคิลานุปัฏฐากและครูพระปริยัตินิเทศก์ 85 รูป',
+      impactDescription: 'นำองค์ความรู้จากงานวิจัยไปพัฒนาเป็นหลักสูตรระยะสั้นเพื่อผลิตพระคิลานุปัฏฐาก ได้รับการอนุมัติเป็นหลักสูตรรับรองของสถาบัน และนำไปใช้จัดอบรมจริงร่วมกับโรงพยาบาลเลย',
+      benefitUnitCount: 85,
+      economicValueThb: null,
+      certifyingAgency: 'สำนักงานเขตการศึกษาพระปริยัติธรรม แผนกสามัญศึกษา เขต ๘',
+      certifierName: 'ประธานกลุ่มโรงเรียนพระปริยัติธรรมฯ',
+      letterNo: 'สขศ.๘ ๐๑๔/๒๕๖๗',
+      letterDate: new Date('2024-04-05'),
+      evidenceFileUrl: '/uploads/evidence-sample-cert-academic.pdf',
+      yearBe: 2567,
+      profileId: userMonk.profile!.id,
+      status: 'VERIFIED',
+    },
+  });
+
+  console.log('Seed with Multi-Tier accounts and Research Utilizations completed successfully!');
 }
 
 main()

@@ -64,6 +64,7 @@ model ResearcherProfile {
   
   authorships     PublicationAuthor[]
   grantMemberships GrantMember[]
+  utilizations    ResearchUtilization[]
   
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
@@ -100,6 +101,7 @@ model Publication {
   verifiedBy      String?
   
   authors         PublicationAuthor[]
+  utilizations    ResearchUtilization[]
   createdAt       DateTime            @default(now())
   updatedAt       DateTime            @updatedAt
 
@@ -145,6 +147,7 @@ model ResearchGrant {
   members         GrantMember[]
   milestones      GrantMilestone[]
   publications    Publication[]
+  utilizations    ResearchUtilization[]
   
   createdAt       DateTime            @default(now())
   updatedAt       DateTime            @updatedAt
@@ -177,4 +180,40 @@ model GrantMember {
 
   @@unique([grantId, profileId])
   @@map("grant_members")
+}
+
+model ResearchUtilization {
+  id                String             @id @default(cuid())
+  title             String             // ชื่อโครงการ/นวัตกรรมที่นำไปใช้ประโยชน์
+  dimension         String             // POLICY, PUBLIC_COMMUNITY, ECONOMIC_LOCAL, ACADEMIC
+  targetArea        String             // พื้นที่เป้าหมาย เช่น อ.เมืองเลย, อ.เชียงคาน, จ.เลย
+  targetGroup       String             // กลุ่มเป้าหมาย เช่น พระภิกษุสามเณร, ผู้สูงอายุ, ชุมชนริมโขง
+  impactDescription String             // รายละเอียดการนำไปใช้และผลกระทบที่เกิดขึ้น
+  benefitUnitCount  Int?               // จำนวนผู้ได้รับประโยชน์ (รูป/คน)
+  economicValueThb  Float?             // มูลค่าผลกระทบทางเศรษฐกิจฐานราก (บาท)
+  
+  // การรับรองจากหน่วยงานภายนอก
+  certifyingAgency  String             // หน่วยงานที่นำไปใช้และออกหนังสือรับรอง
+  certifierName     String?            // ชื่อและตำแหน่งผู้ลงนามรับรอง
+  letterNo          String?            // เลขที่หนังสือรับรอง
+  letterDate        DateTime?          // วันที่ออกหนังสือรับรอง
+  evidenceFileUrl   String?            // URL/Path เอกสารรับรอง (PDF) จาก Digital Evidence Vault
+  
+  profileId         String
+  profile           ResearcherProfile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  grantId           String?
+  grant             ResearchGrant?     @relation(fields: [grantId], references: [id], onDelete: SetNull)
+  
+  publicationId     String?
+  publication       Publication?       @relation(fields: [publicationId], references: [id], onDelete: SetNull)
+  
+  status            String             @default("VERIFIED") // DRAFT, VERIFIED
+  yearBe            Int                // ปี พ.ศ. ที่นำไปใช้ เช่น 2567
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@index([dimension])
+  @@index([yearBe])
+  @@map("research_utilizations")
 }
