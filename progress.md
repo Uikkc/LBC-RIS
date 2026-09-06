@@ -20,6 +20,7 @@
 | **Phase 9: Academic Rank Readiness (ก.พ.อ.)** | **COMPLETED** | 100% | ระบบประเมินความพร้อมขอตำแหน่งทางวิชาการ (ผศ./รศ./ศ. Checklist) และบันทึกเอกสารคำสอน/ตำรา |
 | **Phase 10: Official GorPorOr 03 & Academic CV** | **COMPLETED** | 100% | ระบบพิมพ์แบบฟอร์ม ก.พ.อ. 03 ทางการ และ Official Academic Curriculum Vitae (Print to PDF) |
 | **Phase 11: Research Utilization & Social Impact** | **COMPLETED** | 100% | ระบบบันทึกการนำผลงานวิจัยไปใช้ประโยชน์และผลกระทบต่อสังคม 4 มิติ (อว./สมศ.) พร้อมหลักฐานรับรองทางการ |
+| **Phase 12: Academic Workload & TOR Appraisal** | **COMPLETED** | 100% | ระบบประเมินภาระงานวิชาการประจำปีและข้อตกลงการปฏิบัติงาน 5 ด้าน (แบบ ทร. ๐๑ / TOR) ดึงงานวิจัยอัตโนมัติ |
 
 ---
 
@@ -155,11 +156,27 @@
   - [x] โมดอลบันทึกผลงานใหม่พร้อมคอมโพเนนต์ `FileUpload`
   - [x] เพิ่มเมนู "ผลกระทบสังคม (Impact)" ในแถบนำทาง Navbar
 
+### Phase 12: Academic Workload & TOR Appraisal System
+- [x] **TASK-1201: Workload Data Architecture & Schema Extension**
+  - [x] เพิ่มโมเดล `AcademicWorkload` ใน `prisma/schema.prisma` รองรับภาระงาน 5 ด้าน (สอน, วิจัย, บริการวิชาการ, ศิลปวัฒนธรรม, บริหาร)
+  - [x] คำนวณชั่วโมงภาระงานรวม เทียบเกณฑ์มาตรฐานขั้นต่ำ 18 ชม./สัปดาห์ และระดับผลการประเมิน (ดีเด่น, ดีมาก, ดี, ต้องปรับปรุง)
+  - [x] รองรับการแนบไฟล์หลักฐานตารางสอน/คำสั่งแต่งตั้ง (PDF จาก Evidence Vault)
+  - [x] รัน `prisma db push` และ Seed ข้อมูลภาระงานอาจารย์สงฆ์และผู้บริหาร
+- [x] **TASK-1202: One-Click Research Auto-Harvesting & Workload API (`/api/workload`)**
+  - [x] `GET`: ดึงข้อมูลภาระงานเดิม และดึงผลงานวิจัย/ทุนวิจัย/การใช้ประโยชน์ในปีการศึกษานั้น ๆ มาแปลงเป็นชั่วโมงภาระงานวิจัยให้อัตโนมัติ (ไม่ต้องกรอกซ้ำ)
+  - [x] `POST`: ตรวจสอบความถูกต้องของ Input ด้วย Zod Schema (Rule 2) คำนวณชั่วโมงรวม และบันทึกข้อมูลแบบ Upsert
+- [x] **TASK-1203: Interactive TOR Workspace & Print-Ready Layout (`/workload`)**
+  - [x] ตัวเลือกปีการศึกษา ภาคการศึกษา และรายชื่ออาจารย์ (สำหรับผู้บริหารและเจ้าหน้าที่)
+  - [x] เกจสรุปชั่วโมงภาระงานรวม เทียบเกณฑ์ขั้นต่ำ 18.0 ชม./สัปดาห์ พร้อมแถบสถานะผ่านเกณฑ์
+  - [x] พื้นที่จัดการ 5 ภาระงาน: งานสอน (ตารางรายวิชา/หน่วยกิต), งานวิจัย (Auto-Harvested), บริการวิชาการ, ศิลปวัฒนธรรม, งานบริหาร
+  - [x] แบบฟอร์มทางการ A4 "แบบข้อตกลงและรายงานผลการปฏิบัติงานของอาจารย์ประจำ (แบบ ทร. ๐๑)" พร้อมจุดลงนาม 3 ตำแหน่งสำหรับการพิมพ์ `@media print`
+  - [x] เพิ่มเมนู "ภาระงาน (TOR)" ในแถบนำทาง Navbar
+
 ---
 
 ## 3. Verification & Build Results
 * `npx tsc --noEmit`: ผ่าน 100% (Zero type errors)
-* `npm run build`: สำเร็จ 100% ทั้ง 20 Routes ถูก Optimize และสร้างเรียบร้อย (Static & Dynamic SSR)
+* `npm run build`: สำเร็จ 100% ทั้ง 21 Routes ถูก Optimize และสร้างเรียบร้อย (Static & Dynamic SSR)
 * Database: SQLite `dev.db` ผ่านการรัน Migration และ Seed Master Data สมบูรณ์
 
 ---
@@ -171,3 +188,4 @@
 * **[2026-09-06] ADR-004:** ขยายโมเดล `ResearchGrant` ใน `prisma/schema.prisma` เพื่อรองรับจริยธรรมการวิจัยในมนุษย์ (IRB - Institutional Review Board) ได้แก่ `irbStatus`, `irbNumber`, `irbApprovalDate`, `irbExpireDate`, `irbFileUrl` และเพิ่ม `PATCH` endpoint เพื่อรองรับวงจรการส่งและอนุมัติงวดงานวิจัยครบวงจร
 * **[2026-09-06] ADR-005:** เพิ่มฟิลด์เป้าหมายตำแหน่งทางวิชาการ (`targetRank`, `teachingDocStatus`, `teachingDocTitle`, `teachingDocFileUrl`) ใน `ResearcherProfile` เพื่อสนับสนุนการประเมินความพร้อมและจัดเก็บเอกสารประกอบการสอนตามเกณฑ์ ก.พ.อ.
 * **[2026-09-06] ADR-006:** เพิ่มโมเดล `ResearchUtilization` ใน `prisma/schema.prisma` เพื่อรองรับการติดตามการนำผลงานวิจัยไปใช้ประโยชน์ 4 มิติตามเกณฑ์ อว./สมศ. (เชิงนโยบาย, เชิงสาธารณะ/ชุมชน, เชิงเศรษฐกิจฐานราก, เชิงวิชาการ) พร้อมจัดเก็บหนังสือรับรองและไฟล์ PDF จากหน่วยงานภายนอกเพื่อใช้เป็นหลักฐานการประเมินคุณภาพการศึกษา (SAR)
+* **[2026-09-06] ADR-007:** เพิ่มโมเดล `AcademicWorkload` ใน `prisma/schema.prisma` เพื่อรองรับการคำนวณและประเมินภาระงาน 5 ด้านตามเกณฑ์มาตรฐาน ก.พ.อ. และข้อบังคับ มจร. (ขั้นต่ำ 18.0 ชม./สัปดาห์) พร้อมฟังก์ชัน One-Click Auto-Harvesting ดึงผลงานวิจัยจากฐานข้อมูล RIS แปลงเป็นชั่วโมงภาระงานให้อัตโนมัติ

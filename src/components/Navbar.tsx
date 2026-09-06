@@ -16,7 +16,8 @@ import {
   LogOut,
   UserPlus,
   ShieldAlert,
-  Globe
+  Globe,
+  ClipboardCheck
 } from 'lucide-react';
 
 interface CurrentUser {
@@ -55,6 +56,7 @@ export default function Navbar() {
   const navItems = [
     { href: '/', label: 'แดชบอร์ดบริหาร', icon: BarChart3 },
     { href: '/academic-ranks', label: 'เกณฑ์ขอตำแหน่ง (กพอ.)', icon: GraduationCap },
+    { href: '/workload', label: 'ภาระงาน (TOR)', icon: ClipboardCheck },
     { href: '/research', label: 'คลังผลงานวิชาการ', icon: BookOpen },
     { href: '/profile', label: 'แฟ้มประวัตินักวิจัย', icon: UserCheck },
     { href: '/grants', label: 'ทุนและงวดงาน', icon: Award },

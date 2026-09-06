@@ -65,6 +65,7 @@ model ResearcherProfile {
   authorships     PublicationAuthor[]
   grantMemberships GrantMember[]
   utilizations    ResearchUtilization[]
+  workloads       AcademicWorkload[]
   
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
@@ -216,4 +217,46 @@ model ResearchUtilization {
   @@index([dimension])
   @@index([yearBe])
   @@map("research_utilizations")
+}
+
+model AcademicWorkload {
+  id                String             @id @default(cuid())
+  profileId         String
+  profile           ResearcherProfile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  academicYear      Int                // ปีการศึกษา เช่น 2567
+  semester          Int                // ภาคการศึกษา 1 หรือ 2
+  
+  // ภาระงาน 5 ด้าน (คำนวณเป็นชั่วโมงภาระงานต่อสัปดาห์ Workload Hours/Week)
+  teachingHours     Float              @default(0.0) // ด้านงานสอน (บรรยาย/ปฏิบัติการ/วิทยานิพนธ์)
+  teachingDetails   String?            // JSON string: list of courses taught
+  
+  researchHours     Float              @default(0.0) // ด้านงานวิจัยและงานวิชาการ (Auto-harvested)
+  researchDetails   String?            // JSON string: summary of publications & grants
+  
+  serviceHours      Float              @default(0.0) // ด้านบริการวิชาการแก่สังคม/ชุมชน
+  serviceDetails    String?            // JSON string: service activities
+  
+  cultureHours      Float              @default(0.0) // ด้านทำนุบำรุงศิลปวัฒนธรรมและพระพุทธศาสนา
+  cultureDetails    String?            // JSON string: cultural preservation activities
+  
+  adminHours        Float              @default(0.0) // ด้านงานบริหาร/อาจารย์ที่ปรึกษา/ภารกิจพิเศษ
+  adminDetails      String?            // JSON string: administrative tasks
+  
+  totalHours        Float              @default(0.0) // รวมชั่วโมงภาระงานต่อสัปดาห์ (เกณฑ์ขั้นต่ำ 18.0)
+  evaluationLevel   String             @default("GOOD") // OUTSTANDING, VERY_GOOD, GOOD, UNSATISFACTORY
+  isPassedMinimum   Boolean            @default(true) // ผ่านเกณฑ์ขั้นต่ำ 18 ชม./สัปดาห์ หรือไม่
+  
+  status            String             @default("DRAFT") // DRAFT, SUBMITTED, APPROVED
+  evaluatorFeedback String?            // ความเห็นของผู้บังคับบัญชา/ผู้ประเมิน
+  evaluatorName     String?            // ชื่อผู้ประเมิน
+  evaluatedAt       DateTime?
+  
+  evidenceFileUrl   String?            // เอกสารแนบตารางสอน/คำสั่งแต่งตั้ง (PDF จาก Vault)
+  
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@unique([profileId, academicYear, semester])
+  @@index([academicYear, semester])
+  @@map("academic_workloads")
 }

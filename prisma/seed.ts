@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log('Clearing existing data...');
+  await prisma.academicWorkload.deleteMany({});
   await prisma.researchUtilization.deleteMany({});
   await prisma.grantMilestone.deleteMany({});
   await prisma.grantMember.deleteMany({});
@@ -390,7 +391,131 @@ async function main() {
     },
   });
 
-  console.log('Seed with Multi-Tier accounts and Research Utilizations completed successfully!');
+  console.log('Seeding Academic Workloads & TOR Appraisals...');
+  await prisma.academicWorkload.create({
+    data: {
+      profileId: userMonk.profile!.id,
+      academicYear: 2567,
+      semester: 1,
+      teachingHours: 9.0,
+      teachingDetails: JSON.stringify([
+        {
+          code: '000 156',
+          name: 'พระพุทธศาสนากับสังคมสมัยใหม่',
+          credits: 3,
+          lectureHours: 3.0,
+          labHours: 0.0,
+          studentsCount: 45,
+        },
+        {
+          code: '401 202',
+          name: 'ธรรมวิภาคและพุทธประวัติ',
+          credits: 3,
+          lectureHours: 3.0,
+          labHours: 0.0,
+          studentsCount: 38,
+        },
+        {
+          code: '401 405',
+          name: 'สัมมนาพระพุทธศาสนาบูรณาการ',
+          credits: 3,
+          lectureHours: 3.0,
+          labHours: 0.0,
+          studentsCount: 22,
+        },
+      ]),
+      researchHours: 10.0,
+      researchDetails: JSON.stringify({
+        summary: 'บทความ TCI-1 (6.0 ชม.) + โครงการวิจัยกองทุน วส.เลย (4.0 ชม.)',
+        harvestedItems: [
+          'พุทธบูรณาการเพื่อการสร้างเสริมความเข้มแข็งของชุมชนลุ่มน้ำเลย (TCI-1)',
+          'การพัฒนาศักยภาพพระคิลานุปัฏฐากในจังหวัดเลย (ทุนวิจัย วส.เลย)',
+        ],
+      }),
+      serviceHours: 4.0,
+      serviceDetails: JSON.stringify([
+        { activity: 'วิทยากรบรรยายโครงการธรรมะสัญจร สำนักงานสาธารณสุขจังหวัดเลย', hours: 2.0 },
+        { activity: 'ที่ปรึกษาศูนย์ไกล่เกลี่ยข้อพิพาทชุมชนตำบลนาอาน', hours: 2.0 },
+      ]),
+      cultureHours: 3.0,
+      cultureDetails: JSON.stringify([
+        { activity: 'ประธานฝ่ายสงฆ์โครงการปฏิบัติธรรมสวดมนต์ข้ามปี ประจำปี 2567', hours: 2.0 },
+        { activity: 'ร่วมจัดงานประเพณีบุญหลวงและการละเล่นผีตาโขน อ.ด่านซ้าย', hours: 1.0 },
+      ]),
+      adminHours: 4.0,
+      adminDetails: JSON.stringify([
+        { role: 'อาจารย์ประจำหลักสูตรพุทธศาสตรบัณฑิต', hours: 2.0 },
+        { role: 'อาจารย์ที่ปรึกษานิสิตชั้นปีที่ 2 สาขาวิชาพระพุทธศาสนา (35 รูป/คน)', hours: 2.0 },
+      ]),
+      totalHours: 30.0,
+      evaluationLevel: 'VERY_GOOD',
+      isPassedMinimum: true,
+      status: 'APPROVED',
+      evaluatorName: 'พระครูปริยัติวีราภรณ์, รศ.ดร. (รองผู้อำนวยการฝ่ายวิชาการ)',
+      evaluatorFeedback: 'ภาระงานครบถ้วนสมบูรณ์ มีผลงานวิจัยตีพิมพ์ใน TCI-1 และมีส่วนร่วมในการบริการวิชาการแก่คณะสงฆ์จังหวัดเลยอย่างต่อเนื่อง',
+      evaluatedAt: new Date('2024-10-15'),
+      evidenceFileUrl: '/uploads/evidence-sample-timetable-monk.pdf',
+    },
+  });
+
+  await prisma.academicWorkload.create({
+    data: {
+      profileId: userExec.profile!.id,
+      academicYear: 2567,
+      semester: 1,
+      teachingHours: 6.0,
+      teachingDetails: JSON.stringify([
+        {
+          code: '400 301',
+          name: 'ระเบียบวิธีวิจัยทางพระพุทธศาสนา',
+          credits: 3,
+          lectureHours: 3.0,
+          labHours: 0.0,
+          studentsCount: 30,
+        },
+        {
+          code: '400 499',
+          name: 'การค้นคว้าอิสระทางพุทธศาสตร์',
+          credits: 3,
+          lectureHours: 3.0,
+          labHours: 0.0,
+          studentsCount: 15,
+        },
+      ]),
+      researchHours: 12.0,
+      researchDetails: JSON.stringify({
+        summary: 'บทความ TCI-1 (6.0 ชม.) + หัวหน้าโครงการวิจัย (4.0 ชม.) + ผลกระทบทางสังคม (2.0 ชม.)',
+        harvestedItems: [
+          'พุทธบูรณาการเพื่อการสร้างเสริมความเข้มแข็งของชุมชนลุ่มน้ำเลย (First Author TCI-1)',
+          'โมเดลท่องเที่ยวพุทธเชียงคานและเศรษฐกิจฐานราก (หนังสือรับรอง ทต.เชียงคาน)',
+        ],
+      }),
+      serviceHours: 5.0,
+      serviceDetails: JSON.stringify([
+        { activity: 'คณะกรรมการพิจารณาธรรมนูญสุขภาพพระสงฆ์จังหวัดเลย', hours: 3.0 },
+        { activity: 'ผู้ทรงคุณวุฒิประเมินบทความวิชาการระดับชาติ', hours: 2.0 },
+      ]),
+      cultureHours: 4.0,
+      cultureDetails: JSON.stringify([
+        { activity: 'ประธานจัดงานส่งเสริมประเพณีลอยกระทงและวัฒนธรรมลุ่มน้ำโขง', hours: 4.0 },
+      ]),
+      adminHours: 10.0,
+      adminDetails: JSON.stringify([
+        { role: 'รองผู้อำนวยการวิทยาลัยสงฆ์เลย ฝ่ายวิชาการและวิจัย', hours: 6.0 },
+        { role: 'ประธานคณะกรรมการประจำวิทยาลัยสงฆ์เลย', hours: 4.0 },
+      ]),
+      totalHours: 37.0,
+      evaluationLevel: 'OUTSTANDING',
+      isPassedMinimum: true,
+      status: 'APPROVED',
+      evaluatorName: 'ผู้อำนวยการวิทยาลัยสงฆ์เลย',
+      evaluatorFeedback: 'มีภาระงานเกินเกณฑ์มาตรฐานขั้นต่ำ ผลงานวิจัยและงานบริหารโดดเด่นเป็นแบบอย่างที่ดีของสถาบัน',
+      evaluatedAt: new Date('2024-10-15'),
+      evidenceFileUrl: '/uploads/evidence-sample-timetable-exec.pdf',
+    },
+  });
+
+  console.log('Seed with Multi-Tier accounts, Utilizations & Academic Workloads completed successfully!');
 }
 
 main()
