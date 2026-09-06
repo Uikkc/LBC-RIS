@@ -12,7 +12,10 @@ import {
   Sparkles, 
   ArrowUpRight,
   ShieldCheck,
-  Building2
+  Building2,
+  AlertTriangle,
+  Clock,
+  ArrowRight
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -32,6 +35,11 @@ interface StatsData {
     totalPublications: number;
     activeGrants: number;
     totalBudget: number;
+  };
+  alerts?: {
+    overdueMilestonesCount: number;
+    dueSoonMilestonesCount: number;
+    irbApprovedCount: number;
   };
   trendData: Array<{ year: string; count: number }>;
   fundingChartData: Array<{ name: string; value: number }>;
@@ -110,6 +118,41 @@ export default function ExecutiveDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Alert Center Widget for Executives & Officers */}
+      {data.alerts && (data.alerts.overdueMilestonesCount > 0 || data.alerts.dueSoonMilestonesCount > 0) && (
+        <div className="bg-amber-50/90 border border-amber-200 rounded-2xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <div className="flex items-start sm:items-center gap-3">
+            <span className="p-2 bg-amber-500 text-white rounded-xl shadow-2xs mt-0.5 sm:mt-0">
+              <AlertTriangle className="w-5 h-5" />
+            </span>
+            <div>
+              <h4 className="text-sm font-bold text-amber-950">
+                ศูนย์เตือนภัยเร่งรัดงวดงานวิจัย (Research Milestone Alert)
+              </h4>
+              <p className="text-xs text-amber-800 mt-0.5">
+                {data.alerts.overdueMilestonesCount > 0 && (
+                  <span className="font-semibold text-rose-700 mr-3">
+                    🚨 เกินกำหนดส่ง {data.alerts.overdueMilestonesCount} งวดงาน
+                  </span>
+                )}
+                {data.alerts.dueSoonMilestonesCount > 0 && (
+                  <span className="font-medium text-amber-900">
+                    ⚠️ ใกล้ถึงกำหนดส่งภายใน 30 วัน {data.alerts.dueSoonMilestonesCount} งวดงาน
+                  </span>
+                )}
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/grants"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow-2xs transition-all shrink-0"
+          >
+            <span>ตรวจสอบและเร่งรัด</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      )}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">

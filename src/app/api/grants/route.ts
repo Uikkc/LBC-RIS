@@ -54,6 +54,11 @@ export async function POST(request: Request) {
       startDate,
       endDate,
       profileId,
+      irbStatus,
+      irbNumber,
+      irbApprovalDate,
+      irbExpireDate,
+      irbFileUrl,
     } = body;
 
     const newGrant = await prisma.researchGrant.create({
@@ -67,6 +72,11 @@ export async function POST(request: Request) {
         startDate: new Date(startDate || new Date()),
         endDate: new Date(endDate || new Date(Date.now() + 365*24*60*60*1000)),
         status: 'IN_PROGRESS',
+        irbStatus: irbStatus || 'NOT_REQUIRED',
+        irbNumber: irbNumber || null,
+        irbApprovalDate: irbApprovalDate ? new Date(irbApprovalDate) : null,
+        irbExpireDate: irbExpireDate ? new Date(irbExpireDate) : null,
+        irbFileUrl: irbFileUrl || null,
         members: profileId
           ? {
               create: [
@@ -102,5 +112,30 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Failed to create grant:', error);
     return NextResponse.json({ error: 'Failed to create grant' }, { status: 500 });
+  }
+}
+
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json();
+    const { milestoneId, status, deliverableFileUrl, submittedDate } = body;
+
+    if (!milestoneId) {
+      return NextResponse.json({ error: 'milestoneId is required' }, { status: 400 });
+    }
+
+    const updated = await prisma.grantMilestone.update({
+      where: { id: milestoneId },
+      data: {
+        status: status || undefined,
+        deliverableFileUrl: deliverableFileUrl || undefined,
+        submittedDate: submittedDate ? new Date(submittedDate) : (status === 'SUBMITTED' ? new Date() : undefined),
+      },
+    });
+
+    return NextResponse.json(updated);
+  } catch (error) {
+    console.error('Failed to update milestone:', error);
+    return NextResponse.json({ error: 'Failed to update milestone' }, { status: 500 });
   }
 }

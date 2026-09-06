@@ -16,6 +16,7 @@
 | **Phase 5: Quality Hardening & Verification** | **COMPLETED** | 100% | ผ่านการทดสอบ Typecheck 100% (`tsc --noEmit`) และ `next build` สำเร็จสมบูรณ์ |
 | **Phase 6: Multi-Tier RBAC & Auth System** | **COMPLETED** | 100% | ระบบสมาชิก 3 ระดับ (Admin, เจ้าหน้าที่สาขา, อาจารย์/นักวิจัยสงฆ์-คฤหัสถ์) พร้อมหน้ายืนยันตัวตนอาจารย์ |
 | **Phase 7: Digital Evidence & PDF Vault** | **COMPLETED** | 100% | ระบบอัปโหลดและคลังจัดเก็บไฟล์เอกสารหลักฐานจริง (PDF, DOCX, รูปภาพ) แนบผลงานวิจัยและการตรวจประเมิน SAR |
+| **Phase 8: Research Ethics (IRB) & Alert Engine** | **COMPLETED** | 100% | ระบบติดตามจริยธรรมการวิจัยในมนุษย์ (IRB) และศูนย์เตือนภัยเร่งรัดงวดงานวิจัย (Overdue / Due Soon) พร้อมแนบรายงานงวดงาน |
 
 ---
 
@@ -94,6 +95,19 @@
   - [x] เพิ่มคอลัมน์ "เอกสารหลักฐานจริง" ในตาราง SAR พร้อมปุ่มคลิกเปิดดูไฟล์หลักฐานทันที
   - [x] อัปเดต `/api/qa-export` ให้แนบ Link เอกสารหลักฐานจริงลงในไฟล์ Excel/CSV อัตโนมัติ
 
+### Phase 8: Research Ethics (IRB) & Milestone Alert Engine
+- [x] **TASK-801: Human Research Ethics (IRB) Schema & Tracker (`/grants`)**
+  - [x] ขยายโมเดล `ResearchGrant` รองรับ `irbStatus`, `irbNumber`, `irbApprovalDate`, `irbExpireDate`, `irbFileUrl`
+  - [x] แสดง Badge สถานะจริยธรรมในมนุษย์ (ผ่านการรับรอง, รอพิจารณา, หมดอายุ) พร้อมลิงก์เปิดดูใบรับรอง PDF
+  - [x] ฟอร์มเพิ่มโครงการวิจัยใหม่รองรับการกรอกข้อมูลและอัปโหลดไฟล์ใบรับรองจริยธรรม
+- [x] **TASK-802: Milestone Deadline Urgency Classification Engine**
+  - [x] คำนวณวันคงเหลือแบบ Real-time: 🚨 เกินกำหนดส่ง (Overdue), ⚠️ ใกล้ถึงกำหนดส่งใน 30 วัน (Due Soon), 🕒 อยู่ในเกณฑ์ (On Track), ✅ อนุมัติแล้ว
+  - [x] แถบสรุปด่วน (Alert Center Banner) ที่หน้า `/grants` พร้อมปุ่มกรอง Filter เฉพาะงวดงานที่มีปัญหา
+- [x] **TASK-803: Executive Alert Center & Interactive Milestone Submission**
+  - [x] แจ้งเตือนยอดงวดงานค้างส่งบน Dashboard ผู้บริหาร (`/`)
+  - [x] โมดอลส่งรายงานงวดงาน (แนบไฟล์รายงาน PDF/DOCX)
+  - [x] ปุ่มตรวจรับและอนุมัติงวดงานสำหรับเจ้าหน้าที่ (`PATCH /api/grants`)
+
 ---
 
 ## 3. Verification & Build Results
@@ -107,3 +121,4 @@
 * **[2026-09-06] ADR-001:** เลือกใช้ **Modular Monolith บน Next.js 14+ (App Router)** เพื่อความรวดเร็วในการพัฒนาด้วยเทคนิค Vibe Code และมี Type-Safety ครอบคลุมตั้งแต่ Database ถึง Frontend
 * **[2026-09-06] ADR-002:** แยกฟิลด์ `chaya` (ฉายาพระภิกษุ) และ `sanghaStatus` ในตาราง `ResearcherProfile` เพื่อตอบโจทย์อัตลักษณ์ของวิทยาลัยสงฆ์โดยเฉพาะ
 * **[2026-09-06] ADR-003:** ใช้ SQLite ผ่าน Prisma ORM ในการรันบนเครื่อง Local Windows เพื่อให้พร้อมใช้งานทันทีโดยไม่ต้องพึ่งพา Docker หรือ MySQL Server ภายนอก และสามารถสลับเป็น PostgreSQL บน Cloud ได้ทันทีผ่านการเปลี่ยน `DATABASE_URL`
+* **[2026-09-06] ADR-004:** ขยายโมเดล `ResearchGrant` ใน `prisma/schema.prisma` เพื่อรองรับจริยธรรมการวิจัยในมนุษย์ (IRB - Institutional Review Board) ได้แก่ `irbStatus`, `irbNumber`, `irbApprovalDate`, `irbExpireDate`, `irbFileUrl` และเพิ่ม `PATCH` endpoint เพื่อรองรับวงจรการส่งและอนุมัติงวดงานวิจัยครบวงจร

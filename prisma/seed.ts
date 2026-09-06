@@ -188,6 +188,12 @@ async function main() {
       startDate: new Date('2024-01-15'),
       endDate: new Date('2025-01-14'),
       status: 'IN_PROGRESS',
+      // จริยธรรมการวิจัยในมนุษย์ (IRB)
+      irbStatus: 'APPROVED',
+      irbNumber: 'MCU-IRB-2567/012',
+      irbApprovalDate: new Date('2024-02-01'),
+      irbExpireDate: new Date('2025-01-31'),
+      irbFileUrl: '/uploads/evidence/sample_buddhist_research.pdf',
       members: {
         create: [
           { profileId: userExec.profile!.id, role: 'หัวหน้าโครงการ' },
@@ -199,16 +205,65 @@ async function main() {
           {
             milestoneNumber: 1,
             title: 'รายงานความก้าวหน้างวดที่ 1 และทบทวนวรรณกรรม',
-            dueDate: new Date('2024-05-15'),
-            submittedDate: new Date('2024-05-10'),
+            dueDate: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000), // ผ่านมาแล้ว 60 วัน
+            submittedDate: new Date(Date.now() - 65 * 24 * 60 * 60 * 1000),
             disbursementAmount: 180000.0,
             status: 'APPROVED',
+            deliverableFileUrl: '/uploads/evidence/sample_buddhist_research.pdf',
           },
           {
             milestoneNumber: 2,
             title: 'รายงานผลการลงพื้นที่เก็บข้อมูลภาคสนาม 14 อำเภอ',
-            dueDate: new Date('2024-09-30'),
+            dueDate: new Date(Date.now() + 12 * 24 * 60 * 60 * 1000), // อีก 12 วัน (DUE_SOON)
             disbursementAmount: 180000.0,
+            status: 'PENDING',
+          },
+          {
+            milestoneNumber: 3,
+            title: 'รายงานการวิจัยฉบับสมบูรณ์ (ปิดโครงการ)',
+            dueDate: new Date(Date.now() + 120 * 24 * 60 * 60 * 1000),
+            disbursementAmount: 90000.0,
+            status: 'PENDING',
+          },
+        ],
+      },
+    },
+  });
+
+  const grant2 = await prisma.researchGrant.create({
+    data: {
+      projectCode: 'LBC-GRT-2567-002',
+      titleTh: 'การจัดการความรู้ภูมิปัญญาท้องถิ่นเชิงพุทธเพื่อส่งเสริมการท่องเที่ยวเชิงวัฒนธรรมอำเภอเชียงคาน จังหวัดเลย',
+      titleEn: 'Buddhist Local Wisdom Management for Cultural Tourism in Chiang Khan, Loei',
+      fundingSource: 'กองทุนวิจัยพัฒนาวิทยาลัยสงฆ์เลย',
+      grantType: 'INTERNAL',
+      totalBudget: 120000.0,
+      startDate: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000),
+      endDate: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000),
+      status: 'IN_PROGRESS',
+      // อยู่ระหว่างขอรับรองจริยธรรม
+      irbStatus: 'UNDER_REVIEW',
+      irbNumber: 'อยู่ระหว่างพิจารณา (MCU-IRB-REV-045)',
+      members: {
+        create: [
+          { profileId: userMonk.profile!.id, role: 'หัวหน้าโครงการ' },
+          { profileId: userQA.profile!.id, role: 'ผู้ร่วมวิจัย' },
+        ],
+      },
+      milestones: {
+        create: [
+          {
+            milestoneNumber: 1,
+            title: 'รายงานการสังเคราะห์ข้อมูลบริบทและเครื่องมือวิจัย',
+            dueDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000), // เกินกำหนดมาแล้ว 8 วัน (OVERDUE)
+            disbursementAmount: 60000.0,
+            status: 'PENDING',
+          },
+          {
+            milestoneNumber: 2,
+            title: 'รายงานผลการสัมภาษณ์ปราชญ์ชาวบ้านและร่างแนวทาง',
+            dueDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+            disbursementAmount: 60000.0,
             status: 'PENDING',
           },
         ],

@@ -12,6 +12,9 @@ export async function GET() {
       allGrants,
       publicationsByYear,
       departments,
+      overdueMilestonesCount,
+      dueSoonMilestonesCount,
+      irbApprovedCount,
     ] = await Promise.all([
       prisma.researcherProfile.count(),
       prisma.publication.count(),
@@ -30,6 +33,24 @@ export async function GET() {
             },
           },
         },
+      }),
+      prisma.grantMilestone.count({
+        where: {
+          status: 'PENDING',
+          dueDate: { lt: new Date() },
+        },
+      }),
+      prisma.grantMilestone.count({
+        where: {
+          status: 'PENDING',
+          dueDate: {
+            gte: new Date(),
+            lte: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          },
+        },
+      }),
+      prisma.researchGrant.count({
+        where: { irbStatus: 'APPROVED' },
       }),
     ]);
 
@@ -66,6 +87,11 @@ export async function GET() {
         totalPublications,
         activeGrants,
         totalBudget,
+      },
+      alerts: {
+        overdueMilestonesCount,
+        dueSoonMilestonesCount,
+        irbApprovedCount,
       },
       trendData,
       fundingChartData,

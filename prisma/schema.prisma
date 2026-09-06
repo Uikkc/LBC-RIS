@@ -129,6 +129,13 @@ model ResearchGrant {
   endDate         DateTime
   status          String              @default("IN_PROGRESS") // PROPOSAL, APPROVED, IN_PROGRESS, COMPLETED, TERMINATED
   
+  // จริยธรรมการวิจัยในมนุษย์ (IRB - Institutional Review Board)
+  irbStatus       String              @default("NOT_REQUIRED") // NOT_REQUIRED, UNDER_REVIEW, APPROVED, EXPIRED
+  irbNumber       String?             // เลขที่รับรอง เช่น "MCU-IRB-2567/018"
+  irbApprovalDate DateTime?
+  irbExpireDate   DateTime?
+  irbFileUrl      String?             // ลิงก์ไฟล์หนังสือรับรอง PDF
+  
   members         GrantMember[]
   milestones      GrantMilestone[]
   publications    Publication[]
