@@ -11,8 +11,11 @@ import {
   FileText, 
   Filter,
   X,
-  Loader2
+  Loader2,
+  FileCheck2,
+  Download
 } from 'lucide-react';
+import FileUpload from '@/components/FileUpload';
 
 interface Publication {
   id: string;
@@ -24,6 +27,7 @@ interface Publication {
   yearBe: number;
   doi?: string;
   isbn?: string;
+  fileUrl?: string | null;
   qaScore: number;
   authors: Array<{
     authorName: string;
@@ -39,7 +43,19 @@ export default function ResearchRepository() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Form State
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    titleTh: string;
+    titleEn: string;
+    abstractTh: string;
+    type: string;
+    indexing: string;
+    venueName: string;
+    yearBe: number;
+    authorName: string;
+    authorShare: number;
+    doi: string;
+    fileUrl: string | null;
+  }>({
     titleTh: '',
     titleEn: '',
     abstractTh: '',
@@ -50,6 +66,7 @@ export default function ResearchRepository() {
     authorName: 'พระมหาสมคิด ชินวํโส, ผศ.ดร.',
     authorShare: 100,
     doi: '',
+    fileUrl: null,
   });
 
   const [aiLoading, setAiLoading] = useState(false);
@@ -139,6 +156,7 @@ export default function ResearchRepository() {
           authorName: 'พระมหาสมคิด ชินวํโส, ผศ.ดร.',
           authorShare: 100,
           doi: '',
+          fileUrl: null,
         });
         setAiStatus(null);
         fetchPublications();
@@ -176,7 +194,7 @@ export default function ResearchRepository() {
             <span>คลังผลงานวิชาการและงานวิจัย</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            รวบรวมบทความวารสาร รายงานการประชุม ตำรา และผลงานสร้างสรรค์ของคณาจารย์วิทยาลัยสงฆ์เลย
+            รวบรวมบทความวารสาร รายงานการประชุม ตำรา และผลงานสร้างสรรค์ พร้อมคลังเอกสารหลักฐานจริง (PDF Vault)
           </p>
         </div>
 
@@ -244,6 +262,18 @@ export default function ResearchRepository() {
                     ปี พ.ศ. {pub.yearBe}
                   </span>
                   <span className="text-xs text-slate-400 font-medium">| {pub.type}</span>
+
+                  {/* Evidence Vault Badge */}
+                  {pub.fileUrl ? (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <FileCheck2 className="w-3 h-3" />
+                      <span>มีเอกสารหลักฐานจริง (PDF Vault)</span>
+                    </span>
+                  ) : (
+                    <span className="text-[11px] text-slate-400 font-medium italic">
+                      ยังไม่มีไฟล์แนบ
+                    </span>
+                  )}
                 </div>
 
                 <h3 className="text-base font-bold text-slate-900 leading-snug hover:text-brand-primary transition-colors">
@@ -274,6 +304,21 @@ export default function ResearchRepository() {
                     </>
                   )}
                 </div>
+
+                {/* Evidence View Action Button */}
+                {pub.fileUrl && (
+                  <div className="pt-2">
+                    <a
+                      href={pub.fileUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-rose-50 text-brand-dark hover:bg-rose-100 text-xs font-bold transition-colors border border-rose-200"
+                    >
+                      <Download className="w-3.5 h-3.5 text-brand-primary" />
+                      <span>เปิดดูเอกสารฉบับเต็ม (Full-Text PDF)</span>
+                    </a>
+                  </div>
+                )}
               </div>
 
               {/* QA Score Badge */}
@@ -290,7 +335,7 @@ export default function ResearchRepository() {
         </div>
       )}
 
-      {/* Add Publication Modal with Gemini AI Integration */}
+      {/* Add Publication Modal with File Upload */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 my-8">
@@ -334,6 +379,16 @@ export default function ResearchRepository() {
                   onChange={(e) => setFormData({ ...formData, titleEn: e.target.value })}
                   placeholder="e.g. Buddhist Integration for Enhancing Resilience..."
                   className="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-primary/20 focus:outline-none"
+                />
+              </div>
+
+              {/* Digital Evidence Upload Box */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+                <FileUpload
+                  label="แนบไฟล์บทความวิจัยฉบับเต็ม / เอกสารหลักฐาน (PDF Vault)"
+                  helperText="ลากไฟล์ PDF บทความวิจัย หรือใบตอบรับการตีพิมพ์มาวางที่นี่ (สูงสุด 25 MB)"
+                  value={formData.fileUrl}
+                  onChange={(url) => setFormData({ ...formData, fileUrl: url })}
                 />
               </div>
 

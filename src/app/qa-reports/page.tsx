@@ -8,7 +8,9 @@ import {
   Award, 
   Calculator, 
   Filter,
-  FileText
+  FileText,
+  ExternalLink,
+  FileCheck2
 } from 'lucide-react';
 
 interface Publication {
@@ -21,6 +23,7 @@ interface Publication {
   qaScore: number;
   doi?: string;
   isbn?: string;
+  fileUrl?: string | null;
   authors: Array<{
     authorName: string;
     authorShare: number;
@@ -50,6 +53,7 @@ export default function QaReportsPage() {
   const totalScore = publications.reduce((sum, p) => sum + p.qaScore, 0);
   const facultyCount = 50; // บุคลากร 50 รูป/คน
   const scorePerCapita = totalScore / facultyCount;
+  const verifiedWithFilesCount = publications.filter((p) => p.fileUrl).length;
 
   const handleExportCsv = () => {
     window.location.href = `/api/qa-export?yearBe=${selectedYear}`;
@@ -65,7 +69,7 @@ export default function QaReportsPage() {
             <span>ระบบออกรายงานประกันคุณภาพการศึกษา (SAR / กพอ. / สมศ.)</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            รวบรวมและคำนวณค่าน้ำหนักผลงานทางวิชาการตามเกณฑ์มาตรฐานเพื่อการประเมินคุณภาพระดับสถาบัน
+            รวบรวมและคำนวณค่าน้ำหนักผลงานทางวิชาการตามเกณฑ์มาตรฐาน พร้อมตรวจสอบเอกสารหลักฐานจริง (PDF Vault)
           </p>
         </div>
 
@@ -79,7 +83,7 @@ export default function QaReportsPage() {
       </div>
 
       {/* Year Filter & SAR Score Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
           <div>
             <span className="text-xs font-semibold text-slate-400 uppercase">ปี พ.ศ. ที่ประเมิน</span>
@@ -102,7 +106,7 @@ export default function QaReportsPage() {
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
           <div>
-            <span className="text-xs font-semibold text-slate-400 uppercase">คะแนนผลงานวิจัยรวม (Score)</span>
+            <span className="text-xs font-semibold text-slate-400 uppercase">คะแนนผลงานวิจัยรวม</span>
             <div className="text-2xl font-extrabold text-brand-primary mt-0.5">
               {totalScore.toFixed(2)}
             </div>
@@ -123,6 +127,19 @@ export default function QaReportsPage() {
           </div>
           <div className="p-3 rounded-xl bg-emerald-50 text-emerald-600">
             <Award className="w-5 h-5" />
+          </div>
+        </div>
+
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+          <div>
+            <span className="text-xs font-semibold text-slate-400 uppercase">มีหลักฐาน PDF แนบ</span>
+            <div className="text-2xl font-extrabold text-indigo-600 mt-0.5">
+              {verifiedWithFilesCount} / {publications.length}
+            </div>
+            <span className="text-[11px] text-slate-500">พร้อมตรวจประเมินจริง</span>
+          </div>
+          <div className="p-3 rounded-xl bg-indigo-50 text-indigo-600">
+            <FileCheck2 className="w-5 h-5" />
           </div>
         </div>
       </div>
@@ -155,6 +172,7 @@ export default function QaReportsPage() {
                   <th className="py-3 px-3">ฐานข้อมูล / ดัชนี</th>
                   <th className="py-3 px-3 text-center">ค่าน้ำหนัก</th>
                   <th className="py-3 px-3">แหล่งตีพิมพ์ / เผยแพร่</th>
+                  <th className="py-3 px-3 text-center">เอกสารหลักฐานจริง</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -177,6 +195,21 @@ export default function QaReportsPage() {
                       {pub.qaScore.toFixed(2)}
                     </td>
                     <td className="py-3.5 px-3 text-slate-600 truncate max-w-xs">{pub.venueName}</td>
+                    <td className="py-3.5 px-3 text-center">
+                      {pub.fileUrl ? (
+                        <a
+                          href={pub.fileUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-[11px] border border-emerald-200 transition-colors"
+                        >
+                          <span>ดูหลักฐาน (PDF)</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      ) : (
+                        <span className="text-[11px] text-slate-400 italic">ไม่มีไฟล์</span>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
